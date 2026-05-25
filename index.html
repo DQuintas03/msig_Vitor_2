@@ -1,150 +1,85 @@
 
-<h2 class="sr-only">Indicadores interativos dos principais prémios e distinções desportivas do município de Braga</h2>
+  <style>
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;0,700;1,300&family=Barlow+Condensed:wght@300;400;600;700;900&display=swap');
+  .root{padding:1.5rem 0;font-family:'Barlow Condensed',sans-serif}
+  .hint{font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:#aaa;text-align:center;margin-bottom:1.2rem}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px}
+  .card{background:#fff;border:1.5px solid #e0e0e0;border-radius:var(--border-radius-lg);padding:1.4rem 1.1rem 1.1rem;cursor:pointer;position:relative;overflow:hidden;transition:border-color 0.2s,transform 0.2s,box-shadow 0.2s}
+  .card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:4px;background:var(--ac);transform:scaleX(0);transform-origin:left;transition:transform 0.35s ease}
+  .card:hover{border-color:#bbb;transform:translateY(-3px);box-shadow:0 6px 18px rgba(0,0,0,0.08)}
+  .card:hover::after,.card.open::after{transform:scaleX(1)}
+  .card.open{border-color:#aaa}
+  .c-icon{width:32px;height:32px;margin-bottom:12px;display:block}
+  .c-icon svg{width:32px;height:32px}
+  .c-year{font-family:'Cormorant Garamond',serif;font-size:40px;font-weight:700;line-height:0.9;margin-bottom:8px;color:#111}
+  .c-title{font-size:11px;font-weight:700;letter-spacing:0.13em;text-transform:uppercase;color:#555;line-height:1.45}
+  .c-body{max-height:0;overflow:hidden;transition:max-height 0.4s ease,opacity 0.3s ease;opacity:0}
+  .card.open .c-body{max-height:240px;opacity:1}
+  .c-desc{font-family:'Cormorant Garamond',serif;font-size:14px;font-weight:300;font-style:italic;color:#333;line-height:1.65;margin-top:12px;padding-top:12px;border-top:1.5px solid #ececec}
+  .c-src{display:block;font-size:10px;letter-spacing:0.07em;color:#aaa;margin-top:8px}
+  .c-src a{color:var(--ac);text-decoration:none;font-weight:700}
+  .c-src a:hover{text-decoration:underline}
+  </style>
 
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;0,700;1,300&family=Barlow+Condensed:wght@300;400;600;700;900&display=swap');
-.root{padding:1.5rem 0;font-family:'Barlow Condensed',sans-serif;background:transparent}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px}
-.card{
-  background:#fff;
-  border:1.5px solid #e0e0e0;
-  border-radius:var(--border-radius-lg);
-  padding:1.4rem 1.1rem 1.1rem;
-  cursor:pointer;
-  position:relative;
-  overflow:hidden;
-  transition:border-color 0.2s,transform 0.2s,box-shadow 0.2s;
-}
-.card::after{
-  content:'';
-  position:absolute;bottom:0;left:0;right:0;
-  height:4px;
-  background:var(--ac);
-  transform:scaleX(0);
-  transform-origin:left;
-  transition:transform 0.35s ease;
-}
-.card:hover{border-color:#bbb;transform:translateY(-3px);box-shadow:0 6px 18px rgba(0,0,0,0.08)}
-.card:hover::after,.card.open::after{transform:scaleX(1)}
-.card.open{border-color:#aaa}
-.c-icon{font-size:24px;color:var(--ac);margin-bottom:10px;display:block}
-.c-year{
-  font-family:'Cormorant Garamond',serif;
-  font-size:40px;font-weight:700;
-  line-height:0.9;margin-bottom:8px;
-  color:#111;
-}
-.c-title{
-  font-size:11px;font-weight:700;
-  letter-spacing:0.13em;text-transform:uppercase;
-  color:#555;line-height:1.45;
-}
-.c-body{
-  max-height:0;overflow:hidden;
-  transition:max-height 0.4s ease,opacity 0.3s ease;
-  opacity:0;
-}
-.card.open .c-body{max-height:240px;opacity:1}
-.c-desc{
-  font-family:'Cormorant Garamond',serif;
-  font-size:14px;font-weight:300;font-style:italic;
-  color:#333;line-height:1.65;
-  margin-top:12px;padding-top:12px;
-  border-top:1.5px solid #ececec;
-}
-.c-src{
-  display:block;font-size:10px;
-  letter-spacing:0.07em;color:#aaa;
-  margin-top:8px;
-}
-.c-src a{color:var(--ac);text-decoration:none;font-weight:700}
-.c-src a:hover{text-decoration:underline}
-.hint{
-  font-size:11px;letter-spacing:0.1em;text-transform:uppercase;
-  color:#aaa;text-align:center;margin-bottom:1.2rem;
-}
-</style>
+  <div class="root">
+    <p class="hint">Clica num galardão para explorar</p>
+    <div class="grid" id="grid"></div>
+  </div>
 
-<div class="root">
-  <p class="hint">Clica num galardão para explorar</p>
-  <div class="grid" id="grid"></div>
-</div>
+  <script>
+  var ICONS={
+    trophy:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8m-4-4v4M5 3H3v5a4 4 0 004 4h10a4 4 0 004-4V3h-2M5 3h14"/><path d="M5 7c0 2.5 1 4 3 5"/><path d="M19 7c0 2.5-1 4-3 5"/></svg>',
+    building:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M4 21V7l8-4 8 4v14"/><path d="M9 21v-6h6v6"/><circle cx="12" cy="10" r="1"/></svg>',
+    medal:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="15" r="5"/><path d="M8.5 8.5L5 3h14l-3.5 5.5"/><path d="M8.5 8.5A5 5 0 0112 10a5 5 0 013.5-1.5"/></svg>',
+    award:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>',
+    run:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="13" cy="4" r="1.5"/><path d="M8 20l2-5 3 2 3-7"/><path d="M6 12l2-3 4 1 2-3"/></svg>'
+  };
 
-<script>
-var D=[
-  {
-    icon:"ti-trophy",
-    year:"2018",
-    title:"Melhor Cidade Europeia do Desporto",
-    ac:"#3a7d44",
-    desc:"Braga foi distinguida pela ACES Europe como melhor Cidade Europeia do Desporto de 2018 — considerada pelo presidente da autarquia como a melhor organização deste programa de sempre, destacando-se entre mais de 20 cidades europeias.",
-    src:"O Jogo (2019)",
-    url:"https://www.ojogo.pt/multimedia/videos/braga-tera-sido-considerada-a-melhor-cidade-europeia-do-desporto-de-sempre-10415762.html"
-  },
-  {
-    icon:"ti-building-arch",
-    year:"2006",
-    title:"Chicago Athenaeum International Architecture Award",
-    ac:"#1a6496",
-    desc:"O Estádio Municipal de Braga — a Pedreira — ganhou o Chicago Athenaeum International Architecture Award para o melhor novo design global, reconhecendo a obra de Eduardo Souto Moura.",
-    src:"Wikipedia — Estádio Municipal de Braga",
-    url:"https://en.wikipedia.org/wiki/Est%C3%A1dio_Municipal_de_Braga"
-  },
-  {
-    icon:"ti-medal",
-    year:"2004/05",
-    title:"Prémio Secil — Arquitectura e Engenharia Civil",
-    ac:"#c0392b",
-    desc:"O Estádio Municipal de Braga recebeu o Prémio Secil em 2004 na categoria de Arquitectura e em 2005 na de Engenharia Civil, distinção que reconhece as obras mais significativas realizadas em Portugal.",
-    src:"Câmara Municipal de Braga",
-    url:"https://www.cm-braga.pt/pt/1201/conhecer/historia-e-patrimonio/outros-espacos-patrimoniais-relevantes/item/item-1-678"
-  },
-  {
-    icon:"ti-award",
-    year:"2011",
-    title:"Prémio Pritzker — o Nobel da Arquitectura",
-    ac:"#8e44ad",
-    desc:"Eduardo Souto Moura, arquitecto do Estádio Municipal de Braga, recebeu o Prémio Pritzker em 2011 — o mais alto galardão mundial de arquitectura — sendo o estádio obra central da sua carreira.",
-    src:"Câmara Municipal de Braga",
-    url:"https://www.cm-braga.pt/pt/1201/conhecer/historia-e-patrimonio/outros-espacos-patrimoniais-relevantes/item/item-1-678"
-  },
-  {
-    icon:"ti-run",
-    year:"2023",
-    title:"Melhor Meeting Nacional — World Athletics Rankings",
-    ac:"#e67e22",
-    desc:"O Meeting de Braga foi o meeting nacional melhor colocado nos Competition World Rankings da World Athletics em 2023, afirmando-se como uma das melhores competições de atletismo da Península Ibérica.",
-    src:"Associação de Atletismo de Braga (2024)",
-    url:"https://www.aabraga.pt/files/1718900343_1aabad5f335c2396945fa5924af3e88f.pdf"
-  },
-  {
-    icon:"ti-users",
-    year:"Anual",
-    title:"Município Amigo do Desporto — Rede Nacional",
-    ac:"#3a7d44",
-    desc:"Braga integra o programa Município Amigo do Desporto, uma rede nacional de mais de 130 municípios portugueses que reconhece a qualidade da intervenção autárquica no desenvolvimento e promoção do desporto para todos.",
-    src:"Formar — Programa Município Amigo do Desporto",
-    url:"https://formar.pt/programas/"
-  }
-];
+  var D=[
+    {icon:'trophy',year:'2018',title:'Melhor Cidade Europeia do Desporto',ac:'#3a7d44',
+    desc:'Braga foi distinguida pela ACES Europe como melhor Cidade Europeia do Desporto de 2018 — considerada pelo presidente da autarquia como a melhor organização deste programa de sempre.',
+    src:'O Jogo (2019)',url:'https://www.ojogo.pt/multimedia/videos/braga-tera-sido-considerada-a-melhor-cidade-europeia-do-desporto-de-sempre-10415762.html'},
+    {icon:'building',year:'2006',title:'Chicago Athenaeum International Architecture Award',ac:'#1a6496',
+    desc:'O Estádio Municipal de Braga ganhou o Chicago Athenaeum International Architecture Award para o melhor novo design global, reconhecendo a obra de Eduardo Souto Moura.',
+    src:'Wikipedia — Estádio Municipal de Braga',url:'https://en.wikipedia.org/wiki/Est%C3%A1dio_Municipal_de_Braga'},
+    {icon:'medal',year:'2004/05',title:'Prémio Secil — Arquitectura e Engenharia Civil',ac:'#c0392b',
+    desc:'O Estádio Municipal de Braga recebeu o Prémio Secil em 2004 na categoria de Arquitectura e em 2005 na de Engenharia Civil, distinção que reconhece as obras mais significativas realizadas em Portugal.',
+    src:'Câmara Municipal de Braga',url:'https://www.cm-braga.pt/pt/1201/conhecer/historia-e-patrimonio/outros-espacos-patrimoniais-relevantes/item/item-1-678'},
+    {icon:'award',year:'2011',title:'Prémio Pritzker — o Nobel da Arquitectura',ac:'#8e44ad',
+    desc:'Eduardo Souto Moura, arquitecto do Estádio Municipal de Braga, recebeu o Prémio Pritzker em 2011 — o mais alto galardão mundial de arquitectura — sendo o estádio obra central da sua carreira.',
+    src:'Câmara Municipal de Braga',url:'https://www.cm-braga.pt/pt/1201/conhecer/historia-e-patrimonio/outros-espacos-patrimoniais-relevantes/item/item-1-678'},
+    {icon:'run',year:'2023',title:'Melhor Meeting Nacional — World Athletics Rankings',ac:'#e67e22',
+    desc:'O Meeting de Braga foi o meeting nacional melhor colocado nos Competition World Rankings da World Athletics em 2023, afirmando-se como uma das melhores competições de atletismo da Península Ibérica.',
+    src:'Associação de Atletismo de Braga (2024)',url:'https://www.aabraga.pt/files/1718900343_1aabad5f335c2396945fa5924af3e88f.pdf'}
+  ];
 
-var grid=document.getElementById('grid');
-D.forEach(function(d,i){
-  var card=document.createElement('div');
-  card.className='card';
-  card.style.setProperty('--ac',d.ac);
-  card.innerHTML='<i class="ti '+d.icon+' c-icon" aria-hidden="true"></i>'
-    +'<div class="c-year">'+d.year+'</div>'
-    +'<div class="c-title">'+d.title+'</div>'
-    +'<div class="c-body">'
-    +'<div class="c-desc">'+d.desc+'</div>'
-    +'<span class="c-src">Fonte: <a href="'+d.url+'" target="_blank" rel="noopener">'+d.src+'</a></span>'
-    +'</div>';
-  card.addEventListener('click',function(){
-    var isOpen=card.classList.contains('open');
-    grid.querySelectorAll('.card').forEach(function(c){c.classList.remove('open')});
-    if(!isOpen)card.classList.add('open');
+  var grid=document.getElementById('grid');
+  D.forEach(function(d){
+    var card=document.createElement('div');
+    card.className='card';
+    card.style.setProperty('--ac',d.ac);
+    var icon=document.createElement('div');
+    icon.className='c-icon';
+    icon.style.color=d.ac;
+    icon.innerHTML=ICONS[d.icon];
+    card.appendChild(icon);
+    var year=document.createElement('div');
+    year.className='c-year';
+    year.textContent=d.year;
+    card.appendChild(year);
+    var title=document.createElement('div');
+    title.className='c-title';
+    title.textContent=d.title;
+    card.appendChild(title);
+    var body=document.createElement('div');
+    body.className='c-body';
+    body.innerHTML='<div class="c-desc">'+d.desc+'</div><span class="c-src">Fonte: <a href="'+d.url+'" target="_blank" rel="noopener">'+d.src+'</a></span>';
+    card.appendChild(body);
+    card.addEventListener('click',function(){
+      var isOpen=card.classList.contains('open');
+      grid.querySelectorAll('.card').forEach(function(c){c.classList.remove('open')});
+      if(!isOpen)card.classList.add('open');
+    });
+    grid.appendChild(card);
   });
-  grid.appendChild(card);
-});
-</script>
+  </script>
